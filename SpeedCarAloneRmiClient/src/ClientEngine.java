@@ -126,7 +126,9 @@ public class ClientEngine  implements ClientInterface, IClient, Serializable {
      */
     @Override
     public void disconnect() {
+        
         if (isConnected()) {
+            gui.dialog("jeu interrompu");
             try {
                 server.disconnect(id);
                 LOGGER.fine("disconnection done");

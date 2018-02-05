@@ -266,7 +266,7 @@ public class GUI extends javax.swing.JFrame {
 
   
 
-    private void dialog(String message) {
+    public void dialog(String message) {
         JOptionPane.showMessageDialog(this, message);
     }
 
