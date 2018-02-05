@@ -56,11 +56,11 @@ public class GUI extends javax.swing.JFrame {
     /**
      * Constructor
      */
-    public GUI(IClient client) {
+    public GUI() {
         //Calls the private method which initializes the panels, the buttons, etc...
         initComponents();
 
-        this.client = client;
+       
        
      //   listPlayers = new HashMap();
         //Creation of the BufferedImage
@@ -136,7 +136,8 @@ public class GUI extends javax.swing.JFrame {
         }
 
         //Wait for the calibration process to be complete before starting the game
-        jButton1.setEnabled(false);
+        //jButton1.setEnabled(false);
+         //jButton1.setEnabled(true);
 
         //Finalize and refresh the display
         jpBoard.setVisible(true);
@@ -315,7 +316,7 @@ public class GUI extends javax.swing.JFrame {
     public void update(Vector<Rectangle> vDisplayRoad, Vector<Rectangle> vDisplayObstacles, Vector<Rectangle> vDisplayCars, Car myCar, int pos, int nbParticipants, boolean bGameOver, String sPosition) {
        
  
-     
+        System.out.println("GUI.update() dans la GUI");
       
         //Set the player's score
         // jYourScore.setText(client.getServer().getScore(1)+"");
@@ -416,7 +417,7 @@ public class GUI extends javax.swing.JFrame {
             }
 
             //If game is finished, the "Play" button can be pushed again
-            if (!bGameOver) {
+            if (bGameOver) {
                  System.out.println("game is finish");
        
                 jButton1.setEnabled(true);
@@ -521,6 +522,7 @@ public class GUI extends javax.swing.JFrame {
         //Initisalize the grid on the server's side
         //SpeedRacer.cCore.newGrid();
         client.newGrid();
+        
         client.beginGame();
        // arena.setState(ArenaState.Started);
          System.out.println("GUI.jButton1ActionPerformed()");
@@ -538,8 +540,8 @@ public class GUI extends javax.swing.JFrame {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // Warn the server that we closed the GUI and that it can stop
         // Core.bGameQuit = true;
-        client.close();
-
+       // client.close();
+         client.disconnect();
         //Delete the GUI
         this.dispose();
     }//GEN-LAST:event_formWindowClosing
@@ -613,6 +615,10 @@ public class GUI extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_formKeyReleased
+
+    public void setClient(IClient client) {
+        this.client = client;
+    }
 
    
    /* public void addPlayer(long id, Player player) {

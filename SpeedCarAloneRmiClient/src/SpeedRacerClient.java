@@ -2,6 +2,7 @@
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
@@ -62,18 +63,23 @@ public class SpeedRacerClient {
 
         display();
 
-        registryURL = "rmi://" + ipAddress + ":" + 1099 + "/GameServer";
+       // registryURL = "rmi://" + ipAddress + ":" + 1099 + "/GameServer";
 
         try {
 
+             GUI gui = new GUI();
             // crée le client pour la connexion et l'authentification
-            ClientEngine client = new ClientEngine(name);
+            ClientEngine client = new ClientEngine(name,gui);
 
             // essaye de se connecter
             // si connexion retourne true, on est connecté
-            if (client.connect(registryURL, Constants.SERVER_PORT)) {
+            if (client.connect(ipAddress, Constants.SERVER_PORT)) {
 
-                GUI gui = new GUI(client);
+                 gui.setVisible(true);
+                 
+                 
+        client.newGame();
+       //gui.jButton1.setEnabled(true);
                 /*GuiPartyBrowser browser = new GuiPartyBrowser(client);
                 client.addObserver(browser);
                 browser.setVisible(true);*/
@@ -83,7 +89,7 @@ public class SpeedRacerClient {
             }
         } catch (RemoteException ex) {
 
-        }
+        } 
 
         // donne la tâche à réaliser pour se connecter à la fenêtre de connexion
     }
