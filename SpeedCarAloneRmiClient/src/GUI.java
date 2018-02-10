@@ -74,6 +74,7 @@ public class GUI extends javax.swing.JFrame {
      
        
 
+       
         //This code replaces the automatically generated layout code in such a way to include jpBoard
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jpBoard);
         jpBoard.setLayout(jPanel1Layout);
@@ -313,7 +314,7 @@ public class GUI extends javax.swing.JFrame {
      * should be displayed
      * @param sPosition The position (rank) to display if bGameOver is true
      */
-    public void update(Vector<Rectangle> vDisplayRoad, Vector<Rectangle> vDisplayObstacles, Vector<Rectangle> vDisplayCars, Car myCar, int pos, int nbParticipants, boolean bGameOver, String sPosition) {
+    public synchronized void update(Vector<Rectangle> vDisplayRoad, Vector<Rectangle> vDisplayObstacles, Vector<Rectangle> vDisplayCars, Car myCar, int pos, int nbParticipants, boolean bGameOver, String sPosition) {
        
  
         System.out.println("GUI.update() dans la GUI");
@@ -618,6 +619,7 @@ public class GUI extends javax.swing.JFrame {
 
     public void setClient(IClient client) {
         this.client = client;
+         setTitle(client.getUsername());
     }
 
    
