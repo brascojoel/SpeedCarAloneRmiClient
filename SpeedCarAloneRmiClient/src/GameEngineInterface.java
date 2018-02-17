@@ -1,9 +1,5 @@
 
-import java.awt.Color;
 import java.rmi.RemoteException;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
 
 public interface GameEngineInterface extends java.rmi.Remote {
 

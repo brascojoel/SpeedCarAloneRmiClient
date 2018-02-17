@@ -12,12 +12,8 @@ import javax.imageio.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.awt.event.*;
-import java.util.HashMap;
 import java.util.Vector;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 import javax.swing.JOptionPane;
 
 /**
@@ -50,9 +46,6 @@ public class GUI extends javax.swing.JFrame {
      */
     public Car myCar;
 
-   // private HashMap<Long, Player> listPlayers;
-
-   // private Arena arena=null;
     /**
      * Constructor
      */
@@ -60,9 +53,6 @@ public class GUI extends javax.swing.JFrame {
         //Calls the private method which initializes the panels, the buttons, etc...
         initComponents();
 
-       
-       
-     //   listPlayers = new HashMap();
         //Creation of the BufferedImage
         image = new BufferedImage(400, 400, BufferedImage.TYPE_INT_ARGB);
 
@@ -71,10 +61,6 @@ public class GUI extends javax.swing.JFrame {
         jpBoard.setMinimumSize(new java.awt.Dimension(400, 400));
         jpBoard.setPreferredSize(new java.awt.Dimension(400, 400));
 
-     
-       
-
-       
         //This code replaces the automatically generated layout code in such a way to include jpBoard
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jpBoard);
         jpBoard.setLayout(jPanel1Layout);
@@ -135,10 +121,6 @@ public class GUI extends javax.swing.JFrame {
             g2.setColor(Color.BLACK);
             g2.fillRect(0, 0, 400, 400);
         }
-
-        //Wait for the calibration process to be complete before starting the game
-        //jButton1.setEnabled(false);
-         //jButton1.setEnabled(true);
 
         //Finalize and refresh the display
         jpBoard.setVisible(true);
@@ -263,10 +245,6 @@ public class GUI extends javax.swing.JFrame {
 
     }
 
- 
-
-  
-
     public void dialog(String message) {
         JOptionPane.showMessageDialog(this, message);
     }
@@ -285,15 +263,15 @@ public class GUI extends javax.swing.JFrame {
          */
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
-            
+
             if (e.getID() == KeyEvent.KEY_PRESSED) {
-                System.out.println("Press ok before");
+             
                 formKeyPressed(e);
-                System.out.println("Press ok after");
+               
             } else if (e.getID() == KeyEvent.KEY_RELEASED) {
-                System.out.println("Released ok before ");
+              
                 formKeyReleased(e);
-                
+
             }
             return false;
         }
@@ -315,13 +293,9 @@ public class GUI extends javax.swing.JFrame {
      * @param sPosition The position (rank) to display if bGameOver is true
      */
     public synchronized void update(Vector<Rectangle> vDisplayRoad, Vector<Rectangle> vDisplayObstacles, Vector<Rectangle> vDisplayCars, Car myCar, int pos, int nbParticipants, boolean bGameOver, String sPosition) {
-       
- 
-        System.out.println("GUI.update() dans la GUI");
-      
+
         //Set the player's score
-        // jYourScore.setText(client.getServer().getScore(1)+"");
-        jYourScore.setText(client.getScore()+"");
+        jYourScore.setText(client.getScore() + "");
         //Updates the kept Car reference and extract its speed
         this.myCar = myCar;
 
@@ -419,14 +393,10 @@ public class GUI extends javax.swing.JFrame {
 
             //If game is finished, the "Play" button can be pushed again
             if (bGameOver) {
-                 System.out.println("game is finish");
-       
+                System.out.println("game is finish");
+
                 jButton1.setEnabled(true);
             }
-            /*  if(!listPlayers.get(id).isbGameInProgress())
-            {
-                jButton1.setEnabled(true);
-            }*/
 
             //Refresh the display
             this.repaint();
@@ -435,8 +405,6 @@ public class GUI extends javax.swing.JFrame {
         }
     }
 
-    
-  
     /**
      * Initializes the frame content
      */
@@ -464,7 +432,6 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
-      
         jButton1.setText("Play");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -515,21 +482,11 @@ public class GUI extends javax.swing.JFrame {
      */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-        //The button cannot be pushed while a game is in progress
-      
-    
-        //Reset the score
-        //Core.score = 0;
-        //Initisalize the grid on the server's side
-        //SpeedRacer.cCore.newGrid();
         client.newGrid();
-        
+
         client.beginGame();
-       // arena.setState(ArenaState.Started);
-         System.out.println("GUI.jButton1ActionPerformed()");
-         jButton1.setEnabled(false);
-        //Core.bGameFinishing = false;
-        //Core.bGameInProgress = true;
+
+        jButton1.setEnabled(false);
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -539,10 +496,8 @@ public class GUI extends javax.swing.JFrame {
      * @param evt The corresponding WindowEvent
      */
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        // Warn the server that we closed the GUI and that it can stop
-        // Core.bGameQuit = true;
-       // client.close();
-         client.disconnect();
+
+        client.disconnect();
         //Delete the GUI
         this.dispose();
     }//GEN-LAST:event_formWindowClosing
@@ -552,29 +507,26 @@ public class GUI extends javax.swing.JFrame {
      *
      * @param evt The corresponding KeyEvent
      */
-    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
-
-      
+    private synchronized void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
 
         //If the game is running, the car has been displayed once and we are not currently busted
-         if ( myCar != null && myCar.bustedTime == 0) {
-        //if (arena.isInProgress() && myCar != null && myCar.bustedTime == 0) {
-        System.out.println("j'entre bien ici ?");
+        if (myCar != null && myCar.bustedTime == 0) {
+
             switch (evt.getKeyCode()) {
-                case KeyEvent.VK_LEFT: //Core.LE_P = true;   //Left arrow pressed
-                    System.out.println("left");
+                case KeyEvent.VK_LEFT:
+
                     client.moveCar(Constants.LEFT, true);
                     break;
-                case KeyEvent.VK_RIGHT: //Core.RI_P = true;  //Right arrow pressed
-                    System.out.println("right");
+                case KeyEvent.VK_RIGHT:
+
                     client.moveCar(Constants.RIGHT, true);
                     break;
-                case KeyEvent.VK_UP: //Core.UP_P = true;     //Up arrow pressed
-                    System.out.println("up");
+                case KeyEvent.VK_UP:
+
                     client.moveCar(Constants.UP, true);
                     break;
-                case KeyEvent.VK_DOWN: //Core.DO_P = true;   //Down arrow pressed
-                    System.out.println("down");
+                case KeyEvent.VK_DOWN:
+
                     client.moveCar(Constants.DOWN, true);
                     break;
                 default:
@@ -589,26 +541,23 @@ public class GUI extends javax.swing.JFrame {
      *
      * @param evt The corresponding KeyEvent
      */
-    private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
+    private synchronized void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
 
-     
-      
         //If the game is running, the car has been displayed once and we are not currently busted
-          if ( myCar != null && myCar.bustedTime == 0) {
-      //  if (arena.isbGameOver() && myCar != null && myCar.bustedTime == 0) {
-        System.out.println("j'entre bien ici dans release ?");
+        if (myCar != null && myCar.bustedTime == 0) {
+
             switch (evt.getKeyCode()) {
-                
-                case KeyEvent.VK_LEFT: //Core.LE_P = false;  //Left arrow released
+
+                case KeyEvent.VK_LEFT:
                     client.moveCar(Constants.LEFT, false);
                     break;
-                case KeyEvent.VK_RIGHT: //Core.RI_P = false; //Right arrow released
+                case KeyEvent.VK_RIGHT:
                     client.moveCar(Constants.RIGHT, false);
                     break;
-                case KeyEvent.VK_UP: //Core.UP_P = false;    //Up arrow released
+                case KeyEvent.VK_UP:
                     client.moveCar(Constants.UP, false);
                     break;
-                case KeyEvent.VK_DOWN: //Core.DO_P = false;  //Down arrow released
+                case KeyEvent.VK_DOWN:
                     client.moveCar(Constants.DOWN, false);
                     break;
                 default:
@@ -619,13 +568,8 @@ public class GUI extends javax.swing.JFrame {
 
     public void setClient(IClient client) {
         this.client = client;
-         setTitle(client.getUsername());
+        setTitle(client.getUsername());
     }
-
-   
-   /* public void addPlayer(long id, Player player) {
-        listPlayers.put(id, player);
-    }*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton jButton1;

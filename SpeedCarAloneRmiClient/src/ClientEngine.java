@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  *
  * @author brasc
  */
-public class ClientEngine  implements ClientInterface, IClient, Serializable {
+public class ClientEngine implements ClientInterface, IClient, Serializable {
 
     private static final long serialVersionUID = 2533181686936469703L;
     private static final Logger LOGGER = Logger.getLogger(ClientEngine.class
@@ -26,7 +26,7 @@ public class ClientEngine  implements ClientInterface, IClient, Serializable {
     private String name;
     private GameEngineInterface server;
     private GUI gui;
-   
+
     private long id;
 
     /**
@@ -35,15 +35,14 @@ public class ClientEngine  implements ClientInterface, IClient, Serializable {
      * @param username
      * @throws RemoteException
      */
-    public ClientEngine(String username,GUI gui) throws RemoteException {
+    public ClientEngine(String username, GUI gui) throws RemoteException {
         super();
         this.name = username;
-         this.gui =  gui;
-         this.gui.setClient(this);
-        System.out.println("ClientEngine.<init>() gui "+gui);
+        this.gui = gui;
+        this.gui.setClient(this);
+     
     }
 
-  
     @Override
     public String getName() throws RemoteException {
         return name;
@@ -61,49 +60,45 @@ public class ClientEngine  implements ClientInterface, IClient, Serializable {
      */
     @Override
     public boolean connect(String url, int port) {
-      // si pas d'url donnée, on la met à localhost pour jouer en local
-		if (url == null || url.isEmpty()) {
-			url = "localhost";
-		}
-		try {
-			Registry registry = LocateRegistry.getRegistry(url, port);
+        // si pas d'url donnée, on la met à localhost pour jouer en local
+        if (url == null || url.isEmpty()) {
+            url = "localhost";
+        }
+        try {
+            Registry registry = LocateRegistry.getRegistry(url, port);
 
-			server = (GameEngineInterface) registry.lookup(Constants.SERVER_PATH);
+            server = (GameEngineInterface) registry.lookup(Constants.SERVER_PATH);
 
-			// enveloppe le client en UnicastRemoteObject et l'enregistre sur le serveur
-			ClientInterface client = (ClientInterface) UnicastRemoteObject.exportObject(
-					this, 0);
-			id = server.connect(client);
-		} catch (Exception ex) {
-			LOGGER.log(Level.SEVERE, "connection failed at " + url + " on "
-					+ port, ex);
-                         System.out.println("Désolé problème de connexion ");
-			return false;
-		}
-		// si on reçoit bien un id (donc enregistrement a été accepté)
-		if (id != 0) {
-			LOGGER.fine("connection established at " + url + " on " + port);
-                        System.out.println("Vous êtes connecté ");
-			// alors on charge les données de jeu en appelant le serveur
-			//load();
-			return true;
-		}
-                else
-                     System.out.println("échec de connexion ");
-		LOGGER.fine("connection refused at " + url + " on " + port);
-		return false;
-	}
-
-    public void disPlayGui(){
-        
-       
-           
-                    
-                   
-                    gui.setVisible(true);
-                  
-             
+            // enveloppe le client en UnicastRemoteObject et l'enregistre sur le serveur
+            ClientInterface client = (ClientInterface) UnicastRemoteObject.exportObject(
+                    this, 0);
+            id = server.connect(client);
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "connection failed at " + url + " on "
+                    + port, ex);
+            System.out.println("Désolé problème de connexion ");
+            return false;
+        }
+        // si on reçoit bien un id (donc enregistrement a été accepté)
+        if (id != 0) {
+            LOGGER.fine("connection established at " + url + " on " + port);
+            System.out.println("Vous êtes connecté ");
+            // alors on charge les données de jeu en appelant le serveur
+            //load();
+            return true;
+        } else {
+            System.out.println("échec de connexion ");
+        }
+        LOGGER.fine("connection refused at " + url + " on " + port);
+        return false;
     }
+
+    public void disPlayGui() {
+
+        gui.setVisible(true);
+
+    }
+
     @Override
     public boolean isConnected() {
         return (server != null && id != 0);
@@ -114,10 +109,10 @@ public class ClientEngine  implements ClientInterface, IClient, Serializable {
      */
     private void onConnectionLost() {
         if (isConnected()) {
-           
+
             server = null;
             id = 0;
-         
+
         }
     }
 
@@ -126,9 +121,9 @@ public class ClientEngine  implements ClientInterface, IClient, Serializable {
      */
     @Override
     public void disconnect() {
-        
+
         if (isConnected()) {
-            gui.dialog("jeu interrompu");
+
             try {
                 server.disconnect(id);
                 LOGGER.fine("disconnection done");
@@ -140,22 +135,17 @@ public class ClientEngine  implements ClientInterface, IClient, Serializable {
         }
     }
 
-   
-
- 
     @Override
     public void newGame() {
-        if (isConnected() ) {
-            boolean started = false;
+        if (isConnected()) {
+
             try {
-                 System.out.println("id : "+id);
-                started = server.startGame(id);
+
+                server.startGame(id);
             } catch (ConnectException ce) {
                 onConnectionLost();
             } catch (RemoteException e) {
                 LOGGER.log(Level.SEVERE, "starting game failed", e);
-            } finally {
-//                start(started);
             }
         }
     }
@@ -171,30 +161,22 @@ public class ClientEngine  implements ClientInterface, IClient, Serializable {
     @Override
     public void update(Vector<Rectangle> vDisplayRoad, Vector<Rectangle> vDisplayObstacles, Vector<Rectangle> vDisplayCars, Car myCar, int pos, int nbParticipants, boolean bGameOver, String sPosition) throws RemoteException {
 
-      
-          System.out.println("ClientEngine.update() ");
-        
-        
-         if (isConnected() ) {
+        if (isConnected()) {
 
-             System.out.println("ClientEngine.update() "+isConnected()+"  GUI"+gui);
             gui.update(vDisplayRoad, vDisplayObstacles, vDisplayCars, myCar, pos, nbParticipants, bGameOver, sPosition);
 
-        
+        } else {
+            System.out.println("ClientEngine.update() hors " + isConnected() + "  GUI" + gui);
         }
-         else
-              System.out.println("ClientEngine.update() hors "+isConnected()+"  GUI"+gui);
 
-      
     }
 
-   
     @Override
     public void newGrid() {
 
         try {
             server.newGrid(id);
-            System.out.println("ClientEngine.newGrid()");
+
         } catch (ConnectException ce) {
             onConnectionLost();
         } catch (RemoteException e) {
@@ -206,27 +188,24 @@ public class ClientEngine  implements ClientInterface, IClient, Serializable {
     @Override
     public void beginGame() {
 
-        if (isConnected() ) {
-           boolean started = false;
+        if (isConnected()) {
+
             try {
-                
+
                 server.beginGame(id);
-                started = true;
-                System.out.println("ClientEngine.beginGame()");
+
             } catch (ConnectException ce) {
                 onConnectionLost();
             } catch (RemoteException e) {
                 LOGGER.log(Level.SEVERE, "starting game failed", e);
             }
-           finally {
-               // start(started);
-            }
+
         }
     }
 
     @Override
     public void setGui(GUI gui) {
-        System.out.println("ClientEngine.setGui()"+gui);
+
         this.gui = gui;
     }
 
@@ -249,7 +228,7 @@ public class ClientEngine  implements ClientInterface, IClient, Serializable {
     @Override
     public int getScore() {
         try {
-           return  server.getScoreClient(id);
+            return server.getScoreClient(id);
         } catch (RemoteException ex) {
             Logger.getLogger(ClientEngine.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -261,6 +240,4 @@ public class ClientEngine  implements ClientInterface, IClient, Serializable {
         gui.jButton1.setVisible(flag);
     }
 
-   
-   
 }
